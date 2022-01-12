@@ -142,31 +142,47 @@ def minimax(board):
         return move
 
 
-def max_value(board):
+def max_value(board, alpha = float('-inf'), beta = float('inf')):
     if terminal(board):
         return utility(board), None
     v = float('-inf')
     move = None
     for action in actions(board):
-        possible_v = max(v, min_value(result(board, action))[0])
+        lowest_value = min_value(result(board, action), alpha, beta)[0]
+
+        possible_v = max(v, lowest_value)
 
         if possible_v > v:
             v = possible_v
             move = action
 
+        if v >= beta:
+            return v, move
+
+        if v > alpha:
+            alpha = v
+
     return v, move
 
 
-def min_value(board):
+def min_value(board, alpha = float('-inf'), beta = float('inf')):
     if terminal(board):
         return utility(board), None
     v = float('inf')
     move = None
     for action in actions(board):
-        possible_v = min(v, max_value(result(board, action))[0])
+        highest_value = max_value(result(board, action), alpha, beta)[0]
+
+        possible_v = min(v, highest_value)
 
         if possible_v < v:
             v = possible_v
             move = action
+
+        if v <= alpha:
+            return v, move
+
+        if v < beta:
+            beta = v
 
     return v, move
